@@ -21,12 +21,15 @@ object RecentChangesBackend {
     implicit val mat = ActorMaterializer()
     import system.dispatcher
 
-    val outStream = new PrintStream(new ServerSocket(8124).accept().getOutputStream)
+    val outStream = new PrintStream(
+      new ServerSocket(8124).accept().getOutputStream)
     val printStreamFun = printStream(outStream) _
 
     Http()
-      .singleRequest(Get("https://stream.wikimedia.org/v2/stream/recentchange"))
-      .flatMap(httpResp => Unmarshal(httpResp).to[Source[ServerSentEvent, NotUsed]])
+      .singleRequest(
+        Get("https://stream.wikimedia.org/v2/stream/recentchange"))
+      .flatMap(httpResp =>
+        Unmarshal(httpResp).to[Source[ServerSentEvent, NotUsed]])
       .map(_.map(event => stringToJson(event.data)))
       .foreach(_.runForeach(printStreamFun))
   }
@@ -35,9 +38,13 @@ object RecentChangesBackend {
     val json = Json.parse(message)
     Json.obj(
       "user" -> json \ "user",
-      "pageUrl" -> s"""${(json \ "server_url").as[String]}/wiki/${(json \ "title").as[String].replaceAll(" ", "_")}""",
+      "pageUrl" -> s"""${(json \ "server_url")
+        .as[String]}/wiki/${(json \ "title")
+        .as[String]
+        .replaceAll(" ", "_")}""",
       "id" -> json \ "id",
-      "timestamp" -> (json \ "timestamp").as[Long])
+      "timestamp" -> (json \ "timestamp").as[Long]
+    )
   }
 
   def printStream(outStream: PrintStream)(json: JsObject): Unit = {
