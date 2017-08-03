@@ -13,7 +13,5 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % "10.0.9",
   "com.typesafe.akka" %% "akka-stream" % "2.5.3",
   "com.typesafe.akka" %% "akka-slf4j" % "2.5.3",
-  "ch.qos.logback" % "logback-classic" % "1.1.7",
-  "org.apache.spark" %% "spark-core" % sparkVersion,
-  "org.apache.spark" %% "spark-streaming" % sparkVersion
+  "ch.qos.logback" % "logback-classic" % "1.1.7"
 )
